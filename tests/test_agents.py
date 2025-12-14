@@ -66,10 +66,11 @@ class TestModularAgent:
             # Verify file exists
             assert os.path.exists(save_path)
             
-            # Create new agent and load
+            # Create new agent with same config and load
             new_agent = ModularAgent(
                 state_dim=self.state_dim,
-                action_dim=self.action_dim
+                action_dim=self.action_dim,
+                config=self.agent.config  # Use same config
             )
             new_agent.load(save_path)
             

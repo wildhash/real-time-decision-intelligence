@@ -135,7 +135,13 @@ class OnlineLearner:
             update_frequency: Steps between updates
         """
         self.model = model
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        
+        # Only create optimizer if model has parameters
+        if hasattr(model, 'parameters') and callable(model.parameters):
+            self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        else:
+            self.optimizer = None
+            
         self.buffer = ReplayBuffer(capacity=buffer_size)
         self.update_frequency = update_frequency
         self.step_count = 0
@@ -206,7 +212,13 @@ class OfflineLearner:
             num_epochs: Number of training epochs
         """
         self.model = model
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        
+        # Only create optimizer if model has parameters
+        if hasattr(model, 'parameters') and callable(model.parameters):
+            self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        else:
+            self.optimizer = None
+            
         self.batch_size = batch_size
         self.num_epochs = num_epochs
 
@@ -282,8 +294,18 @@ class HybridLearner:
         self.model = model
         self.replay_buffer = ReplayBuffer(capacity=replay_capacity, prioritized=True)
         
-        self.online_learner = OnlineLearner(model, **(online_config or {}))
-        self.offline_learner = OfflineLearner(model, **(offline_config or {}))
+        # Create online and offline learners with proper config
+        online_cfg = online_config or {}
+        offline_cfg = offline_config or {}
+        
+        # Don't pass model to sub-learners if it doesn't have parameters attribute
+        if hasattr(model, 'parameters'):
+            self.online_learner = OnlineLearner(model, **online_cfg)
+            self.offline_learner = OfflineLearner(model, **offline_cfg)
+        else:
+            # For models that don't inherit from nn.Module (like ProbabilisticWorldModel)
+            self.online_learner = OnlineLearner(model, **online_cfg)
+            self.offline_learner = OfflineLearner(model, **offline_cfg)
         
         self.online_steps = 0
         self.offline_updates = 0

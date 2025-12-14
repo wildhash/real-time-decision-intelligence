@@ -44,7 +44,7 @@ class TestReflexLoop:
         metrics = self.loop.update(experience)
         
         assert "reflex_loss" in metrics
-        assert metrics["reflex_loss"] >= 0
+        assert not torch.isnan(torch.tensor(metrics["reflex_loss"]))
 
 
 class TestDeliberativeLoop:

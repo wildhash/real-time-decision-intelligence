@@ -85,11 +85,14 @@ class ModularAgent(Agent):
         )
         
         # Initialize decision loops
+        decision_config = self.config.get("decision_loop", {})
         self.decision_loop = HierarchicalDecisionLoop(
             state_dim=state_dim,
             action_dim=action_dim,
             world_model=self.world_model,
-            **self.config.get("decision_loop", {})
+            reflex_config=decision_config.get("reflex_config"),
+            deliberative_config=decision_config.get("deliberative_config"),
+            meta_config=decision_config.get("meta_config")
         )
         
         # Initialize learning system
@@ -158,9 +161,10 @@ class ModularAgent(Agent):
             done=experience["done"]
         )
         
-        # Update decision loops
-        loop_metrics = self.decision_loop.update_all(experience)
-        metrics.update(loop_metrics)
+        # Update decision loops (only if we have batch data with 'states' key)
+        if "states" in experience:
+            loop_metrics = self.decision_loop.update_all(experience)
+            metrics.update(loop_metrics)
         
         return metrics
 

@@ -7,13 +7,14 @@ and online/offline learning capabilities.
 
 __version__ = "0.1.0"
 
-from rtdi.agents.base import Agent
+from rtdi.agents.base import Agent, ModularAgent
 from rtdi.world_models.probabilistic import ProbabilisticWorldModel
 from rtdi.decision_loops.hierarchical import HierarchicalDecisionLoop
 from rtdi.uncertainty.estimator import UncertaintyEstimator
 
 __all__ = [
     "Agent",
+    "ModularAgent",
     "ProbabilisticWorldModel",
     "HierarchicalDecisionLoop",
     "UncertaintyEstimator",

@@ -238,8 +238,10 @@ class MetaLearningLoop(DecisionLoop):
         self.context_dim = context_dim
         
         # Context encoder for task identification
+        # Input: state + action + reward (scalar)
+        context_input_dim = state_dim + action_dim + 1
         self.context_encoder = nn.Sequential(
-            nn.Linear(state_dim + action_dim + 1, 128),  # state, action, reward
+            nn.Linear(context_input_dim, 128),
             nn.ReLU(),
             nn.Linear(128, context_dim)
         )
@@ -279,14 +281,31 @@ class MetaLearningLoop(DecisionLoop):
             state = traj["state"]
             action = traj["action"]
             reward = traj["reward"]
-            exp = torch.cat([state, action, reward.unsqueeze(-1)], dim=-1)
+            
+            # Ensure all tensors are 1D
+            if len(state.shape) > 1:
+                state = state.squeeze()
+            if len(action.shape) > 1:
+                action = action.squeeze()
+            if len(reward.shape) > 1:
+                reward = reward.squeeze()
+            
+            # Ensure reward is scalar, convert to 1-element tensor if needed
+            if reward.numel() > 1:
+                reward = reward.mean()
+            if len(reward.shape) == 0:
+                reward = reward.unsqueeze(0)
+            
+            exp = torch.cat([state, action, reward], dim=-1)
             experiences.append(exp)
         
         if len(experiences) == 0:
             # Return zero context if no history
             return torch.zeros(1, self.context_dim).to(self.device)
         
-        experiences = torch.cat(experiences, dim=0)
+        # Stack experiences to create [num_experiences, feature_dim]
+        experiences = torch.stack(experiences, dim=0)
+        # Encode each experience and average
         context = self.context_encoder(experiences).mean(dim=0, keepdim=True)
         return context
 
