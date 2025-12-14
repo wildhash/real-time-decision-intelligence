@@ -207,8 +207,11 @@ class ProbabilisticWorldModel(WorldModel):
             state_dist = dist.Normal(state_delta_mean, torch.exp(state_delta_log_std))
             reward_dist = dist.Normal(reward_mean, torch.exp(reward_log_std))
             
+            # Ensure rewards have correct shape for log_prob
+            rewards_target = rewards if rewards.dim() == 2 else rewards.unsqueeze(-1)
+            
             state_loss = -state_dist.log_prob(state_deltas).mean()
-            reward_loss = -reward_dist.log_prob(rewards.unsqueeze(-1)).mean()
+            reward_loss = -reward_dist.log_prob(rewards_target).mean()
             
             loss = state_loss + reward_loss
             losses.append(loss.item())

@@ -50,8 +50,14 @@ class InferenceOptimizer:
         # JIT compilation
         if self.use_jit and torch.cuda.is_available():
             try:
-                # Create example input
-                example_input = torch.randn(self.batch_size, self.model.state_dim).to(self.device)
+                # Create example input - check if model has state_dim attribute
+                if hasattr(self.model, 'state_dim'):
+                    input_dim = self.model.state_dim
+                else:
+                    # Skip JIT if we can't determine input shape
+                    return model
+                
+                example_input = torch.randn(self.batch_size, input_dim).to(self.device)
                 
                 # Trace model
                 with torch.no_grad():

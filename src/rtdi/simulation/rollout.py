@@ -285,12 +285,21 @@ class ModelBasedPlanner:
             state = initial_state.repeat(1, 1)
             
             # Simple policy that follows action sequence
-            def fixed_policy(s, t=[0]):
-                if t[0] < actions.shape[1]:
-                    action = actions[:, t[0]]
-                    t[0] += 1
-                    return action
-                return torch.zeros(1, action_dim).to(device)
+            class FixedPolicy:
+                def __init__(self, action_seq, action_dim, device):
+                    self.action_seq = action_seq
+                    self.action_dim = action_dim
+                    self.device = device
+                    self.t = 0
+                
+                def __call__(self, s):
+                    if self.t < self.action_seq.shape[1]:
+                        action = self.action_seq[:, self.t]
+                        self.t += 1
+                        return action
+                    return torch.zeros(1, self.action_dim).to(self.device)
+            
+            fixed_policy = FixedPolicy(actions, action_dim, device)
             
             # Rollout
             config = RolloutConfig(horizon=horizon, num_samples=1)
