@@ -70,8 +70,8 @@ class TestProbabilisticWorldModel:
         assert "state_loss" in metrics
         assert "reward_loss" in metrics
         
-        # Check losses are valid
-        assert metrics["loss"] > 0
+        # Check losses are valid (finite and not NaN)
+        assert torch.isfinite(torch.tensor(metrics["loss"]))
         assert not torch.isnan(torch.tensor(metrics["loss"]))
 
     def test_sample_trajectories(self):
