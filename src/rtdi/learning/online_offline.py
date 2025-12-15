@@ -242,6 +242,10 @@ class OfflineLearner:
         val_size = int(len(dataset) * validation_split)
         train_size = len(dataset) - val_size
         
+        # Note: This is a simplified implementation. Both train and validation
+        # sample from the same buffer. For proper validation, consider 
+        # partitioning the buffer indices or using held-out data.
+        
         for epoch in range(self.num_epochs):
             # Training phase
             train_losses = []
