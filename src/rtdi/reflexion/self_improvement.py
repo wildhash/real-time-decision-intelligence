@@ -383,7 +383,8 @@ class SelfImprovementLoop:
             action = action_tensor.squeeze(0).cpu().numpy()
             
             # Environment step
-            next_state, reward, done, info = env.step(action)
+            next_state, reward, terminated, truncated, info = env.step(action)
+            done = terminated or truncated
             
             # Store experience
             exp = Experience(
