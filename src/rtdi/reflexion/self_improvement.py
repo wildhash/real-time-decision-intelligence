@@ -301,7 +301,7 @@ class ReflexionAgent:
         
         # Generate better actions (inverse of failed actions with exploration)
         with torch.no_grad():
-            current_actions = self.policy(states)
+            pass
         
         # Encourage different actions from failures
         # Use a contrastive loss to push away from failed actions
