@@ -188,7 +188,8 @@ class OnlineLearner:
         if hasattr(self.model, 'train_step'):
             metrics = self.model.train_step(batch)
         else:
-            metrics = {}
+            # Return default metrics if train_step is unavailable
+            metrics = {"update_performed": False, "loss": float('nan')}
         
         return metrics
 
