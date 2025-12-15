@@ -1,6 +1,6 @@
 """Evaluation benchmarks for dynamic environments."""
 
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, List, Callable
 import torch
 import numpy as np
 import time
