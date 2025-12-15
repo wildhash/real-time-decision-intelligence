@@ -69,7 +69,7 @@ class DynamicEnvironmentBenchmark:
         
         for episode in range(self.num_episodes):
             env = self.env_fn()
-            state = env.reset()
+            state, _ = env.reset()
             
             episode_reward = 0.0
             episode_uncertainty = 0.0
@@ -90,7 +90,8 @@ class DynamicEnvironmentBenchmark:
                 latencies.append(latency)
                 
                 # Environment step
-                next_state, reward, done, info = env.step(action)
+                next_state, reward, terminated, truncated, _ = env.step(action)
+                done = terminated or truncated
                 
                 if render:
                     env.render()
