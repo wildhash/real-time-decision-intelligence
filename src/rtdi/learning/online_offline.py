@@ -303,14 +303,9 @@ class HybridLearner:
         online_cfg = online_config or {}
         offline_cfg = offline_config or {}
         
-        # Don't pass model to sub-learners if it doesn't have parameters attribute
-        if hasattr(model, 'parameters'):
-            self.online_learner = OnlineLearner(model, **online_cfg)
-            self.offline_learner = OfflineLearner(model, **offline_cfg)
-        else:
-            # For models that don't inherit from nn.Module (like ProbabilisticWorldModel)
-            self.online_learner = OnlineLearner(model, **online_cfg)
-            self.offline_learner = OfflineLearner(model, **offline_cfg)
+        # Initialize learners (they handle model parameter checks internally)
+        self.online_learner = OnlineLearner(model, **online_cfg)
+        self.offline_learner = OfflineLearner(model, **offline_cfg)
         
         self.online_steps = 0
         self.offline_updates = 0
