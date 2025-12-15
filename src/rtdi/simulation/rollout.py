@@ -1,6 +1,6 @@
 """Simulation and rollout engine for model-based planning."""
 
-from typing import Dict, Any, List, Optional, Callable
+from typing import Dict, Any, Optional, Callable
 import torch
 from dataclasses import dataclass
 
