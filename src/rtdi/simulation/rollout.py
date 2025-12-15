@@ -2,7 +2,6 @@
 
 from typing import Dict, Any, List, Optional, Callable
 import torch
-import numpy as np
 from dataclasses import dataclass
 
 
