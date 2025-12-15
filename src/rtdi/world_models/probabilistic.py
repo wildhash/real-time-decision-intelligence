@@ -1,7 +1,7 @@
 """Probabilistic World Models for uncertainty-aware state prediction."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict
 import torch
 import torch.nn as nn
 import torch.distributions as dist
