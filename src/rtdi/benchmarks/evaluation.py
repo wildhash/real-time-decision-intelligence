@@ -101,8 +101,10 @@ class DynamicEnvironmentBenchmark:
                 
                 # Track uncertainty if available
                 if hasattr(agent, 'uncertainty_estimator'):
-                    # Simplified uncertainty tracking
-                    episode_uncertainty += 0.1
+                    uncertainty_result = agent.uncertainty_estimator.estimate(
+                        action_tensor.unsqueeze(0)
+                    )
+                    episode_uncertainty += uncertainty_result.get("std", torch.tensor(0.0)).mean().item()
                 
                 state = next_state
                 
