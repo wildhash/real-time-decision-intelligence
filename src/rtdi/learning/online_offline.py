@@ -288,13 +288,16 @@ class HybridLearner:
         offline_config: Optional[Dict[str, Any]] = None,
         replay_capacity: int = 100000
     ):
-        """Initialize hybrid learner.
+        """
+        Create a HybridLearner that combines online and offline training using a shared prioritized replay buffer.
         
-        Args:
-            model: Model to train
-            online_config: Configuration for online learning
-            offline_config: Configuration for offline learning
-            replay_capacity: Capacity of replay buffer
+        The provided model is shared by both the online and offline learners. A prioritized ReplayBuffer with the given capacity is created and passed to the learners. The online_config and offline_config dictionaries are forwarded to OnlineLearner and OfflineLearner respectively. Internal counters for performed online steps and offline training invocations are initialized to zero.
+        
+        Parameters:
+            model (nn.Module): The model instance to be trained by both learners.
+            online_config (Optional[Dict[str, Any]]): Configuration options forwarded to OnlineLearner.
+            offline_config (Optional[Dict[str, Any]]): Configuration options forwarded to OfflineLearner.
+            replay_capacity (int): Maximum number of experiences stored in the shared prioritized replay buffer.
         """
         self.model = model
         self.replay_buffer = ReplayBuffer(capacity=replay_capacity, prioritized=True)
