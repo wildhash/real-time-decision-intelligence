@@ -349,16 +349,16 @@ class ModelBasedPlanner:
                 actions = action_sequences[i:i+1]
                 
                 state = initial_state
-                total_return = 0.0
+                total_return = torch.tensor(0.0, device=device)
                 
                 for t in range(horizon):
                     pred = self.simulation_engine.world_model.forward(
                         state, actions[:, t]
                     )
                     state = pred["next_state_mean"]
-                    total_return += pred["reward_mean"].item()
+                    total_return = total_return + pred["reward_mean"]
                 
-                returns.append(total_return)
+                returns.append(total_return.item())
             
             returns = torch.tensor(returns).to(device)
             
